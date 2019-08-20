@@ -15,9 +15,20 @@ export class PlanetService {
   constructor(private http: HttpClient) {
   }
 
-  getPlanets(): Observable<any> {
-    return this.http.get<any>(this.planetsUrl);
+  getPlanets(url): Observable<any> {
+    return this.http.get<any>(url);
   }
+
+
+
+  // getAllPlanets(): Observable<any> {
+  //   for (let i = 0; i < 7; i++) {
+  //     this.planetsUrl = `https://swapi.co/api/planets/?page=${i + 1}`;
+  //     this.http.get<any>(this.planetsUrl);
+  //   }
+  // }
+
+
 }
 //   getPlanets(planetsUrl: string): Observable<any> {
 //       return this.http.get<any>(planetsUrl);
