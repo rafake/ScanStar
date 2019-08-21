@@ -10,13 +10,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class PlanetService {
   // planets: Planet[];
   // data: Observable<any>;
-  planetsUrl: string = `https://swapi.co/api/planets/`;
+  planetsAll: any;
+  isLoaded: boolean = false;
 
   constructor(private http: HttpClient) {
   }
 
   getPlanets(url): Observable<any> {
     return this.http.get<any>(url);
+  }
+
+  getPlanet(id): Observable<any> {
+    const urlOfPost = `https://swapi.co/api/planets/${id}/`;
+    return this.http.get<any>(urlOfPost);
   }
 
 

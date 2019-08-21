@@ -9,6 +9,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { JumbotronComponent } from './components/jumbotron/jumbotron.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { AppRoutingModule } from './app-routing.module';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
@@ -17,11 +19,13 @@ import { FooterComponent } from './components/footer/footer.component';
     PlanetsComponent,
     JumbotronComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [PlanetService],
   bootstrap: [AppComponent]

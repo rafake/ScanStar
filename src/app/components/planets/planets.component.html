@@ -3,20 +3,27 @@
 
     <div class="row">
       <!--        planets' components-->
-      <div class="col-md-4" *ngFor="let planet of planets">
+      <div class="col-md-4" *ngFor="let planet of planetsStored; index as i">
         <div class="card mb-4 shadow-sm" >
-<!--          <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--            <p class="card-text"><a routerLink="/planets/2">{{planet.name}}</a></p>-->
+          <img src="../../../assets/images/planets-images/Planet_{{i+1}}.png" class="card-img-top" alt="planet">
           <div class="card-body">
-            <p class="card-text">{{planet.name}}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-              </div>
-              <small class="text-muted">9 mins</small>
-            </div>
+            <h5 class="card-title"><a routerLink="/planets/{{i+1}}">{{planet.name}}</a></h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a routerLink="/planets/{{i+1}}" class="btn btn-primary">Read more</a>
           </div>
         </div>
+<!--          <div class="d-flex justify-content-between align-items-center">-->
+<!--            <div class="btn-group">-->
+<!--              <img class="bd-placeholder-img card-img-top" width="100%" src="../../../assets/images/planets-images/Planet_{{i+1}}.png" alt="planet">-->
+<!--              <div class="card-body">-->
+<!--              <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--              </div>-->
+<!--              <small class="text-muted">9 mins</small>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 <!--        planets component end-->
 
 
