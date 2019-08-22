@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PlanetService } from '../../services/planet.service';
 import { Planet } from '../../models/Planet';
 import { concat } from 'rxjs';
+import { PlanetsDataImagesService } from '../../services/planets-data-images.service';
 
 @Component({
   selector: 'app-planets',
@@ -10,14 +11,23 @@ import { concat } from 'rxjs';
 })
 export class PlanetsComponent implements OnInit {
   planetsStored: Planet[];
-  // @ts-ignore
-  planetsArray: Array = [];
+  planetsArray: Array<any> = [];
   combined: any;
+  p: number = 1;
+  itemsPerPage: number = 10;
+  isLoaded: boolean = false;
+  isSearched: boolean = false;
+  imagesForPlanets: object = this.planetsDataImagesService.planetsImages;
 
-  constructor(private planetService: PlanetService) { }
+  constructor(private planetService: PlanetService, private planetsDataImagesService: PlanetsDataImagesService) { }
+
+  includeImage(planetName) {
+    return
+  }
 
   consequtiveRequests() {
     if (this.planetService.isLoaded === false) {
+      this.planetsArray = [];
       const urlAPI1 = `https://swapi.co/api/planets/?page=1`;
       const page1Request = this.planetService.getPlanets(urlAPI1);
       const urlAPI2 = `https://swapi.co/api/planets/?page=2`;
@@ -32,21 +42,41 @@ export class PlanetsComponent implements OnInit {
       const page6Request = this.planetService.getPlanets(urlAPI6);
       const urlAPI7 = `https://swapi.co/api/planets/?page=7`;
       const page7Request = this.planetService.getPlanets(urlAPI7);
+      // if (this.isSearched) {
+      //   this.planetsArray = [];
+      // }
       this.combined = concat(page1Request, page2Request, page3Request, page4Request, page5Request, page6Request, page7Request);
       this.combined.subscribe(planets => {
         let a = planets.results;
         this.planetsArray.push(a);
         console.log(planets.results);
+        this.isSearched = false;
+
       });
       setTimeout(() => {
-        // tslint:disable-next-line:max-line-length
+        console.log(this.planetsArray);
+        for (let i = 0; i < 7; i++) {
+          console.log(this.planetsArray[i]);
+        }
+        for (let i = 0; i < 6; i++) {
+          for (let j = 0; j < 10; j++) {
+            console.log(this.planetsArray[i][j].name);
+          }
+
+        }
+
         this.planetsArray = [...this.planetsArray[0], ...this.planetsArray[1], ...this.planetsArray[2], ...this.planetsArray[3], ...this.planetsArray[4], ...this.planetsArray[5], ...this.planetsArray[6]];
         this.planetsStored = this.planetsArray;
         this.planetService.planetsAll = this.planetsArray;
         this.planetService.isLoaded = true;
+        this.isLoaded = this.planetService.isLoaded;
         console.log(this.planetService.isLoaded);
+        console.log(this.planetsArray);
+
       }, 8000);
     } else {
+      this.isSearched = false;
+      this.isLoaded = this.planetService.isLoaded;
       return this.planetsStored = this.planetService.planetsAll;
     }
   }
@@ -56,6 +86,19 @@ export class PlanetsComponent implements OnInit {
   ngOnInit() {
 
     this.consequtiveRequests();
+
+    this.planetService.filteredResults.subscribe(
+      data => this.planetsStored = data
+    );
+
+    this.planetService.isSearchedState.subscribe(
+      data => {
+        this.isSearched = data;
+        this.planetService.isLoaded = false;
+      }
+    );
+
+
 
   }
 

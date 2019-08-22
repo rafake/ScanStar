@@ -3,6 +3,7 @@ import { Planet } from '../models/Planet';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ export class PlanetService {
   // data: Observable<any>;
   planetsAll: any;
   isLoaded: boolean = false;
+  public filteredResults = new Subject<any>();
+  public isSearchedState = new Subject<any>();
 
   constructor(private http: HttpClient) {
   }
@@ -23,6 +26,17 @@ export class PlanetService {
   getPlanet(id): Observable<any> {
     const urlOfPost = `https://swapi.co/api/planets/${id}/`;
     return this.http.get<any>(urlOfPost);
+  }
+
+  getPlanetsWithSearch(url): Observable<any> {
+    return this.http.get<any>(url);
+  }
+
+  passFilteredResults(passedData) {
+    this.filteredResults.next(passedData);
+  }
+  passIsSearched(passedData) {
+    this.isSearchedState.next(passedData);
   }
 
 

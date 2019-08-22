@@ -1,33 +1,46 @@
 <div class="album py-5 bg-light">
   <div class="container">
-
+    <div class="d-flex justify-content-center align-items-center" *ngIf="!isLoaded">
+      <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
     <div class="row">
+
       <!--        planets' components-->
-      <div class="col-md-4" *ngFor="let planet of planetsStored; index as i">
+      <div class="col-md-4" *ngFor="let planet of planetsStored | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; index as i; ">
         <div class="card mb-4 shadow-sm" >
-<!--            <p class="card-text"><a routerLink="/planets/2">{{planet.name}}</a></p>-->
           <img src="../../../assets/images/planets-images/Planet_{{i+1}}.png" class="card-img-top" alt="planet">
           <div class="card-body">
             <h5 class="card-title"><a routerLink="/planets/{{i+1}}">{{planet.name}}</a></h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <p class="card-text">
+              <span class="badge badge-danger">Climate</span> {{planet.climate}}
+              <br>
+              <span class="badge badge-warning">Terrain</span> {{planet.terrain}}
+
+            </p>
             <a routerLink="/planets/{{i+1}}" class="btn btn-primary">Read more</a>
           </div>
         </div>
-<!--          <div class="d-flex justify-content-between align-items-center">-->
-<!--            <div class="btn-group">-->
-<!--              <img class="bd-placeholder-img card-img-top" width="100%" src="../../../assets/images/planets-images/Planet_{{i+1}}.png" alt="planet">-->
-<!--              <div class="card-body">-->
-<!--              <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
-<!--                <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
-<!--              </div>-->
-<!--              <small class="text-muted">9 mins</small>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        planets component end-->
-
+        <!--        planets' components-->
 
       </div>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+      <button (click)="consequtiveRequests()" type="button" class="btn btn-primary btn-lg" *ngIf="isSearched">Come back to Home</button>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+      <label>Items per page:
+        <select [(ngModel)]="itemsPerPage">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="100">100</option>
+        </select>
+      </label>
     </div>
   </div>
 </div>
