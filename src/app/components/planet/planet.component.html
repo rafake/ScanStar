@@ -26,7 +26,7 @@
                 <div class="row no-gutters align-items-center">
                   <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Rotation period: </div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ planet.rotation_period }} h</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ (!(planet.rotation_period == "unknown")) ? (planet.rotation_period + " h") : "no data"  }}</div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -43,7 +43,7 @@
                 <div class="row no-gutters align-items-center">
                   <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Orbital period</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{planet.orbital_period}} days</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ (!(planet.orbital_period == "unknown")) ? (planet.orbital_period + " days") : "no data"  }}</div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -62,13 +62,13 @@
                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Gravity</div>
                     <div class="row no-gutters align-items-center">
                       <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{planet.gravity}}</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ (!(planet.gravity == "unknown")) ? (planet.gravity) : "no data"  }}</div>
                       </div>
-                      <div class="col">
-                        <div class="progress progress-sm mr-2">
-                          <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                      </div>
+<!--                      <div class="col">-->
+<!--                        <div class="progress progress-sm mr-2">-->
+<!--                          <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>-->
+<!--                        </div>-->
+<!--                      </div>-->
                     </div>
                   </div>
                   <div class="col-auto">
@@ -86,7 +86,7 @@
                 <div class="row no-gutters align-items-center">
                   <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Diameter</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{planet.diameter}} km</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ (!(planet.diameter == "unknown")) ? (planet.diameter + " km") : "no data"  }}</div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -101,10 +101,10 @@
 
         <div class="row">
 
-          <!-- Area Chart -->
+          <!-- Main description -->
           <div class="col-xl-8 col-lg-7">
             <div class="card shadow mb-4">
-              <!-- Card Header - Dropdown -->
+              <!-- Card Header -->
               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h1 class="m-0 font-weight-bold text-dark">{{planet.name}}</h1>
 
@@ -117,85 +117,56 @@
                   <!-- Content Column -->
                   <div class="col-lg-6 mb-4">
 
-                    <!-- Project Card Example -->
+                    <!-- Population Card -->
                     <div class="card shadow mb-4">
                       <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Population</h6>
                       </div>
                       <div class="card-body">
-                        {{planet.population}}
-
+                        {{ (!(planet.population == "unknown")) ? (planet.population | number:'') : "no data" }}
                       </div>
-
                     </div>
+
+                    <!-- Surface water Card -->
                     <div class="card shadow mb-4">
                       <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Surface Water</h6>
                       </div>
                       <div class="card-body">
-                        {{planet.surface_water}}
+                        {{(!(planet.surface_water == "unknown")) ? (planet.surface_water + "% of planet's surface") : "no data"}}
 
                       </div>
 
                     </div>
 
-                    <!-- Color System -->
+                    <!-- Climate and Terrain cards -->
                     <div class="row">
+                      <div class="col-lg-6 mb-4">
+                        <div class="card bg-success text-white shadow">
+                          <div class="card-body text-white small">
+                            Climate
+                            <div class="text-white h5">{{(!(planet.climate == "unknown")) ? (planet.climate) : "no data"}}</div>
+                          </div>
+                        </div>
+                      </div>
 
                       <div class="col-lg-6 mb-4">
                         <div class="card bg-danger text-white shadow">
-                          <div class="card-body text-white-50 small">
-                            Climate
-                            <div class="text-white h5">{{planet.climate}}</div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-lg-6 mb-4">
-                        <div class="card bg-warning text-white shadow">
-                          <div class="card-body text-white-50 small">
+                          <div class="card-body text-white small">
                             Terrain
-                            <div class="text-white h5">{{planet.terrain}}</div>
+                            <div class="text-white h5">{{(!(planet.terrain == "unknown")) ? (planet.terrain) : "no data"}}</div>
                           </div>
                         </div>
                       </div>
-
                     </div>
 
                   </div>
 
+<!--                  Films an Residents card goes here-->
                   <div class="col-lg-6 mb-4">
 
-                    <div class="accordion" id="accordionExample">
-                      <div class="card">
-                        <div class="card-header" id="headingOne">
-                          <h2 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                              Films
-                            </button>
-                          </h2>
-                        </div>
+                    <app-films-and-residents></app-films-and-residents>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                          <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="card">
-                        <div class="card-header" id="headingTwo">
-                          <h2 class="mb-0">
-                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                              Residents
-                            </button>
-                          </h2>
-                        </div>
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                          <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -233,27 +204,3 @@
 
 </div>
 <!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
-<!--<a class="scroll-to-top rounded" href="#page-top" style="display: none;">-->
-<!--  <i class="fas fa-angle-up"></i>-->
-<!--</a>-->
-
-<!--&lt;!&ndash; Logout Modal&ndash;&gt;-->
-<!--<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
-<!--  <div class="modal-dialog" role="document">-->
-<!--    <div class="modal-content">-->
-<!--      <div class="modal-header">-->
-<!--        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>-->
-<!--        <button class="close" type="button" data-dismiss="modal" aria-label="Close">-->
-<!--          <span aria-hidden="true">×</span>-->
-<!--        </button>-->
-<!--      </div>-->
-<!--      <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>-->
-<!--      <div class="modal-footer">-->
-<!--        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>-->
-<!--        <a class="btn btn-primary" href="login.html">Logout</a>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->

@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Planet } from '../models/Planet';
 import { Observable } from 'rxjs';
-import { of } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlanetService {
-  // planets: Planet[];
-  // data: Observable<any>;
   planetsAll: any;
   isLoaded: boolean = false;
   public filteredResults = new Subject<any>();
   public isSearchedState = new Subject<any>();
+  public residentsResults = new Subject<any>();
+  public filmsResults = new Subject<any>();
 
   constructor(private http: HttpClient) {
   }
@@ -28,67 +26,40 @@ export class PlanetService {
     return this.http.get<any>(urlOfPost);
   }
 
+  // sending a search request to server (url added in jumbotron component)
   getPlanetsWithSearch(url): Observable<any> {
     return this.http.get<any>(url);
   }
 
+  // function passing the results of search to planets component (main view were the planets are displayed)
   passFilteredResults(passedData) {
+    console.log(this.filteredResults);
     this.filteredResults.next(passedData);
   }
+
+  // function passing a variable confirming that a search request has been sent
   passIsSearched(passedData) {
     this.isSearchedState.next(passedData);
   }
 
+  getResidentsData(urlResident): Observable<any> {
+      return this.http.get<any>(urlResident);
+  }
+
+  getFilmsData(urlFilm): Observable<any> {
+    return this.http.get<any>(urlFilm);
+  }
 
 
-  // getAllPlanets(): Observable<any> {
-  //   for (let i = 0; i < 7; i++) {
-  //     this.planetsUrl = `https://swapi.co/api/planets/?page=${i + 1}`;
-  //     this.http.get<any>(this.planetsUrl);
-  //   }
-  // }
+  // function passing the resident url from planet component to films and residents component
+  passResidentUrl(passedData) {
+    console.log(this.residentsResults);
+    this.residentsResults.next(passedData);
+  }
 
+  // function passing the film url from planet component to films and residents component
+  passFilmUrl(passedData) {
+    this.filmsResults.next(passedData);
+  }
 
 }
-//   getPlanets(planetsUrl: string): Observable<any> {
-//       return this.http.get<any>(planetsUrl);
-//   }
-// }
-  //   this.planets = [
-  //     {
-  //       name: 'Alderaan',
-  //     },
-  //     {
-  //       name: 'Yavin IV',
-  //     },
-  //     {
-  //       name: 'Hoth',
-  //     }
-  //   ];
-  // }
-  // getPlanets(): Observable<Planet[]> {
-  //   console.log('fetcthing planets from the service');
-  //   return of(this.planets);
-  // }
-  //
-  // getData() {
-  //   this.data = new Observable(observer => {
-  //     setTimeout(() => {
-  //       observer.next(1);
-  //     }, 1000);
-  //
-  //     setTimeout(() => {
-  //       observer.next(2);
-  //     }, 4000);
-  //
-  //     setTimeout(() => {
-  //       observer.next(3);
-  //     }, 8000);
-  //
-  //     setTimeout(() => {
-  //       observer.next(4);
-  //     }, 12000);
-  //   });
-  //   return this.data;
-  // }
-

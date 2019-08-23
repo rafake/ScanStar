@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PlanetService } from '../../services/planet.service';
 import { Planet } from '../../models/Planet';
-import { concat } from 'rxjs';
+import {concat, observable, Subject} from 'rxjs';
 import { PlanetsDataImagesService } from '../../services/planets-data-images.service';
 
 @Component({
@@ -21,35 +21,46 @@ export class PlanetsComponent implements OnInit {
 
   constructor(private planetService: PlanetService, private planetsDataImagesService: PlanetsDataImagesService) { }
 
-  includeImage(planetName) {
-    return
-  }
+  linkProvider(array, attr, value) {
+    let rightIndex: number;
+    for (let i = 0; i < array.length; i += 1) {
+      if (array[i][attr] === value) {
+        rightIndex = i;
+        return rightIndex;
+      }
+    }
+    return rightIndex;
+    }
 
-  consequtiveRequests() {
+    consequtiveRequests() {
     if (this.planetService.isLoaded === false) {
       this.planetsArray = [];
       const urlAPI1 = `https://swapi.co/api/planets/?page=1`;
       const page1Request = this.planetService.getPlanets(urlAPI1);
       const urlAPI2 = `https://swapi.co/api/planets/?page=2`;
       const page2Request = this.planetService.getPlanets(urlAPI2);
-      const urlAPI3 = `https://swapi.co/api/planets/?page=3`;
-      const page3Request = this.planetService.getPlanets(urlAPI3);
-      const urlAPI4 = `https://swapi.co/api/planets/?page=4`;
-      const page4Request = this.planetService.getPlanets(urlAPI4);
-      const urlAPI5 = `https://swapi.co/api/planets/?page=5`;
-      const page5Request = this.planetService.getPlanets(urlAPI5);
-      const urlAPI6 = `https://swapi.co/api/planets/?page=6`;
-      const page6Request = this.planetService.getPlanets(urlAPI6);
-      const urlAPI7 = `https://swapi.co/api/planets/?page=7`;
-      const page7Request = this.planetService.getPlanets(urlAPI7);
-      // if (this.isSearched) {
-      //   this.planetsArray = [];
-      // }
-      this.combined = concat(page1Request, page2Request, page3Request, page4Request, page5Request, page6Request, page7Request);
+      // const urlAPI3 = `https://swapi.co/api/planets/?page=3`;
+      // const page3Request = this.planetService.getPlanets(urlAPI3);
+      // const urlAPI4 = `https://swapi.co/api/planets/?page=4`;
+      // const page4Request = this.planetService.getPlanets(urlAPI4);
+      // const urlAPI5 = `https://swapi.co/api/planets/?page=5`;
+      // const page5Request = this.planetService.getPlanets(urlAPI5);
+      // const urlAPI6 = `https://swapi.co/api/planets/?page=6`;
+      // const page6Request = this.planetService.getPlanets(urlAPI6);
+      // const urlAPI7 = `https://swapi.co/api/planets/?page=7`;
+      // const page7Request = this.planetService.getPlanets(urlAPI7);
+
+      // cobining all observables under one variable
+      // this.combined = concat(page1Request, page2Request, page3Request, page4Request, page5Request, page6Request, page7Request);
+      this.combined = concat(page1Request, page2Request);
+      console.log(this.combined);
+      // subcription to variable and getting results object
       this.combined.subscribe(planets => {
-        let a = planets.results;
-        this.planetsArray.push(a);
-        console.log(planets.results);
+        // array with planets' data is saved under the result key
+        let planetsArrayFromServer = planets.results;
+        console.log(planetsArrayFromServer);
+        this.planetsArray.push(planetsArrayFromServer);
+        // variable confirming that are not currently searched, but this is the first load of planets
         this.isSearched = false;
 
       });
@@ -58,22 +69,28 @@ export class PlanetsComponent implements OnInit {
         for (let i = 0; i < 7; i++) {
           console.log(this.planetsArray[i]);
         }
-        for (let i = 0; i < 6; i++) {
-          for (let j = 0; j < 10; j++) {
-            console.log(this.planetsArray[i][j].name);
-          }
-
-        }
-
-        this.planetsArray = [...this.planetsArray[0], ...this.planetsArray[1], ...this.planetsArray[2], ...this.planetsArray[3], ...this.planetsArray[4], ...this.planetsArray[5], ...this.planetsArray[6]];
+        // for (let i = 0; i < 6; i++) {
+        //   for (let j = 0; j < 10; j++) {
+        //     console.log(this.planetsArray[i][j].name);
+        //   }
+        //
+        // }
+        // destructurization of the planets' arrays from different requests into one temporary planets array
+        this.planetsArray = [...this.planetsArray[0], ...this.planetsArray[1]];
+        // this.planetsArray = [...this.planetsArray[0], ...this.planetsArray[1], ...this.planetsArray[2], ...this.planetsArray[3], ...this.planetsArray[4], ...this.planetsArray[5], ...this.planetsArray[6]];
+        // importing of the planets array from temporary to final variable
         this.planetsStored = this.planetsArray;
-        this.planetService.planetsAll = this.planetsArray;
-        this.planetService.isLoaded = true;
-        this.isLoaded = this.planetService.isLoaded;
-        console.log(this.planetService.isLoaded);
-        console.log(this.planetsArray);
 
-      }, 8000);
+        console.log(this.planetsStored);
+
+        // saving the planets object in the PlanetService
+        this.planetService.planetsAll = this.planetsArray;
+        // information that planets has been loaded and the loader can be hidden
+        this.planetService.isLoaded = true;
+        // passing the information about being loaded to the PlanetService
+        this.isLoaded = this.planetService.isLoaded;
+
+      }, 3000);
     } else {
       this.isSearched = false;
       this.isLoaded = this.planetService.isLoaded;
@@ -88,7 +105,9 @@ export class PlanetsComponent implements OnInit {
     this.consequtiveRequests();
 
     this.planetService.filteredResults.subscribe(
-      data => this.planetsStored = data
+      data => {
+        console.log(data);
+        this.planetsStored = data; }
     );
 
     this.planetService.isSearchedState.subscribe(

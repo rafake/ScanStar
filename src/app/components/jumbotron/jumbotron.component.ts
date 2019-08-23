@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { PlanetService } from '../../services/planet.service';
-import { Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import set = Reflect.set;
 
 @Component({
   selector: 'app-jumbotron',
@@ -11,6 +8,7 @@ import set = Reflect.set;
 })
 export class JumbotronComponent implements OnInit {
   searchPhrase: any = '';
+  // variable created for purposes of search bar requests
   changedPlanets: any = '';
   isSearched: boolean = false;
 
@@ -20,20 +18,24 @@ export class JumbotronComponent implements OnInit {
 
   }
 
-  sendSearchRequest(a) {
-    const urlSearch = `https://swapi.co/api/planets/?search=${a}`;
-    console.log(urlSearch);
+  sendSearchRequest(inputValue) {
+    const urlSearch = `https://swapi.co/api/planets/?search=${inputValue}`;
+    // sending a search request to server
     const searchRequest = this.planetService.getPlanetsWithSearch(urlSearch);
+    // subscription to observable
     searchRequest.subscribe(planets => {
-      const a = planets.results;
-      console.log(planets.results);
-      // this.planetsStored = a;
-      this.planetService.planetsAll = a;
-      console.log(this.planetService.planetsAll);
-      this.changedPlanets = a;
+      const planetsArrayFromServer = planets.results;
+      // passing a planets array from server to service
+      this.planetService.planetsAll = planetsArrayFromServer;
+      // variable created for purposes of search bar requests
+      this.changedPlanets = planetsArrayFromServer;
+      // variable confirming that planets were loaded to the main view
       this.planetService.isLoaded = true;
+      // variable confirming that planets were loaded after a search request
       this.isSearched = true;
+      // call of the function passing the results of search to planets component (main view were the planets are displayed)
       this.planetService.passFilteredResults(this.changedPlanets);
+      // call of the function passing a variable confirming that a search request has been sent
       this.planetService.passIsSearched(this.isSearched);
     });
   }

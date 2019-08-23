@@ -1,25 +1,27 @@
 <div class="album py-5 bg-light">
   <div class="container">
-    <div class="d-flex justify-content-center align-items-center" *ngIf="!isLoaded">
-      <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
+    <div class="d-flex justify-content-center align-items-center m-5" *ngIf="!isLoaded">
+      <div class="spinner-border text-dark" style="width: 3rem; height: 3rem;" role="status">
         <span class="sr-only">Loading...</span>
       </div>
     </div>
+    <div class="d-flex justify-content-center align-items-center m-5 text-dark h3" *ngIf="!isLoaded">Please wait until the planets are loaded.</div>
     <div class="row">
 
       <!--        planets' components-->
-      <div class="col-md-4" *ngFor="let planet of planetsStored | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; index as i; ">
+<!--      <div class="col-md-4" *ngFor="let planet of planetsStored | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; index as i; ">-->
+        <div class="col-md-4" *ngFor="let planet of planetsStored | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; index as i; ">
         <div class="card mb-4 shadow-sm" >
-          <img src="../../../assets/images/planets-images/Planet_{{i+1}}.png" class="card-img-top" alt="planet">
+          <img [src]="imagesForPlanets[planet.name]" class="card-img-top" alt="planet">
           <div class="card-body">
-            <h5 class="card-title"><a routerLink="/planets/{{i+1}}">{{planet.name}}</a></h5>
+            <h5 class="card-title"><a routerLink="/planets/{{linkProvider(planetsStored, 'name', planet.name) + 1}}">{{planet.name}}</a></h5>
             <p class="card-text">
               <span class="badge badge-danger">Climate</span> {{planet.climate}}
               <br>
               <span class="badge badge-warning">Terrain</span> {{planet.terrain}}
 
             </p>
-            <a routerLink="/planets/{{i+1}}" class="btn btn-primary">Read more</a>
+            <a routerLink="/planets/{{linkProvider(planetsStored, 'name', planet.name) + 1}}" class="btn btn-primary">Read more</a>
           </div>
         </div>
         <!--        planets' components-->
@@ -30,11 +32,11 @@
       <button (click)="consequtiveRequests()" type="button" class="btn btn-primary btn-lg" *ngIf="isSearched">Come back to Home</button>
     </div>
     <div class="d-flex justify-content-center mt-4">
-      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      <pagination-controls *ngIf="isLoaded" (pageChange)="p = $event"></pagination-controls>
     </div>
     <div class="d-flex justify-content-center mt-4">
-      <label>Items per page:
-        <select [(ngModel)]="itemsPerPage">
+      <label>
+        <select *ngIf="isLoaded" [(ngModel)]="itemsPerPage">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="25">25</option>
