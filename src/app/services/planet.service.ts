@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 export class PlanetService {
   planetsAll: any;
   isLoaded: boolean = false;
+  count: number;
   public filteredResults = new Subject<any>();
   public isSearchedState = new Subject<any>();
   public residentsResults = new Subject<any>();

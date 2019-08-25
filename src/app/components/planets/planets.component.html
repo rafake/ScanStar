@@ -10,8 +10,8 @@
 
       <!--        planets' components-->
 <!--      <div class="col-md-4" *ngFor="let planet of planetsStored | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; index as i; ">-->
-        <div class="col-md-4" *ngFor="let planet of planetsStored | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; index as i; ">
-        <div class="card mb-4 shadow-sm" >
+        <div class="col-md-4" *ngFor="let planet of planetsStored | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; ">
+        <div class="card mb-4 shadow-sm">
           <img [src]="imagesForPlanets[planet.name]" class="card-img-top" alt="planet">
           <div class="card-body">
             <h5 class="card-title"><a routerLink="/planets/{{linkProvider(planetsStored, 'name', planet.name) + 1}}">{{planet.name}}</a></h5>
