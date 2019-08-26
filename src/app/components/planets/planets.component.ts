@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, getPlatform, OnInit} from '@angular/core';
 import { PlanetService } from '../../services/planet.service';
 import { Planet } from '../../models/Planet';
 import {concat, observable, Subject} from 'rxjs';
@@ -9,19 +9,115 @@ import { PlanetsDataImagesService } from '../../services/planets-data-images.ser
   templateUrl: './planets.component.html',
   styleUrls: ['./planets.component.scss']
 })
+
 export class PlanetsComponent implements OnInit {
   planetsStored: Planet[];
   planetsArray: Array<any> = [];
   combined: any;
-  planetsCount: number;
-  p: number = 1;
-  itemsPerPage: number = 10;
+  page: number = 1;
+  in: number;
+  errorMessage: string;
+  startIndex: number = 0;
+  endIndex: number = 10;
+  perPage: number = 10;
+  total: number;
   isLoaded: boolean = false;
   isSearched: boolean = false;
   imagesForPlanets: object = this.planetsDataImagesService.planetsImages;
-  pageNum: number;
+  checkIfThePlanetsAllArrayIsFilled: boolean = false;
+  checkIfDownloadedArray: boolean[] = [];
 
-  constructor(private planetService: PlanetService, private planetsDataImagesService: PlanetsDataImagesService) { }
+  constructor(private planetService: PlanetService, private planetsDataImagesService: PlanetsDataImagesService) {
+  }
+
+  getArrayFromNumber(length) {
+    return new Array(Math.ceil(length / this.perPage));
+  }
+
+  updateIndex = (pageIndex, itemsPerPage) => {
+    this.startIndex = pageIndex * itemsPerPage;
+    this.endIndex = this.startIndex + itemsPerPage;
+    this.getPage(pageIndex, this.startIndex, this.endIndex);
+  }
+
+  getPlanetStored(arr) {
+    let temporaryArray = [];
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = 0; j < arr[i].length; j++) {
+        temporaryArray = [...temporaryArray, arr[i][j]];
+      }
+    }
+    return temporaryArray;
+  }
+
+
+  getPage = (page: number, start: number, end: number) => {
+    const urlPlanets = `https://swapi.co/api/planets/?page=${page + 1}`;
+    const planetsRequest = this.planetService.getPlanets(urlPlanets);
+    let indexInPlanetAllCountedFromZero = page;
+    const emptyArray = [{name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}];
+    let howManyHttpPages: number;
+
+    // już sa uzupełnione wyniki (ta strona została pobrana)
+    console.log(this.checkIfDownloadedArray[indexInPlanetAllCountedFromZero]);
+    if (this.checkIfDownloadedArray[indexInPlanetAllCountedFromZero] && this.checkIfThePlanetsAllArrayIsFilled) {
+      this.planetsStored = this.getPlanetStored(this.planetService.planetsPagesAll);
+      console.log(this.planetsStored);
+      this.isLoaded = true;
+    } else {
+      this.isLoaded = false;
+      planetsRequest.subscribe(
+        (data) => {
+          this.total = data.count;
+          console.log(indexInPlanetAllCountedFromZero);
+          this.planetService.planetsPagesAll[indexInPlanetAllCountedFromZero] = data.results;
+
+
+          // zapełniamy całą tablicę ze stronami pustymi stronami tam gdzie nie została pobrana, aby ustalić indeksy
+          if (!this.checkIfThePlanetsAllArrayIsFilled) {
+            howManyHttpPages = Math.ceil(this.total / data.results.length);
+            console.log(howManyHttpPages);
+            for (let i = 1; i < howManyHttpPages; i++) {
+              this.planetService.planetsPagesAll[i] = emptyArray;
+              this.checkIfDownloadedArray[i] = false;
+            }
+            this.checkIfThePlanetsAllArrayIsFilled = true;
+          }
+
+          this.checkIfDownloadedArray[indexInPlanetAllCountedFromZero] = true;
+
+          console.log(this.planetService.planetsPagesAll);
+          this.planetsStored = this.getPlanetStored(this.planetService.planetsPagesAll);
+          console.log(this.planetsStored);
+          this.isLoaded = true;
+        });
+    }
+  }
+
+  ngOnInit() {
+
+    // zapytanie o pierwszą listę planet
+    this.getPage(0, 0, 9);
+
+
+    this.planetService.filteredResults.subscribe(
+      data => {
+        console.log(data);
+        this.planetsStored = data; }
+    );
+
+    this.planetService.isSearchedState.subscribe(
+      data => {
+        this.isSearched = data;
+        this.planetService.isLoaded = false;
+      }
+    );
+
+
+
+  }
+
+
 
   linkProvider(array, attr, value) {
     let rightIndex: number;
@@ -34,30 +130,30 @@ export class PlanetsComponent implements OnInit {
     return rightIndex;
     }
 
-    consequtiveRequests() {
-      if (!this.planetService.isLoaded) {
-        this.planetsArray = [];
-        const urlPlanets = `https://swapi.co/api/planets/`;
-        const planetsRequest = this.planetService.getPlanets(urlPlanets);
-
-        planetsRequest.subscribe((planets) => {
-          console.log(planets);
-          console.log(planets.count);
-          this.planetService.count = planets.count;
-          this.planetsCount = planets.count;
-          console.log(planets.next);
-          console.log(planets.results);
-          this.planetsStored = planets.results;
-          this.planetService.planetsAll = this.planetsStored;
-          this.planetService.isLoaded = true;
-          this.isLoaded = this.planetService.isLoaded;
-        });
-      } else {
-        this.isSearched = false;
-        this.isLoaded = this.planetService.isLoaded;
-        return this.planetsStored = this.planetService.planetsAll;
-      }
-    }
+    // consequtiveRequests() {
+    //   if (!this.planetService.isLoaded) {
+    //     this.planetsArray = [];
+    //     const urlPlanets = `https://swapi.co/api/planets/`;
+    //     const planetsRequest = this.planetService.getPlanets(urlPlanets);
+    //
+    //     planetsRequest.subscribe((planets) => {
+    //       console.log(planets);
+    //       console.log(planets.count);
+    //       this.planetService.count = planets.count;
+    //       this.planetsCount = planets.count;
+    //       console.log(planets.next);
+    //       console.log(planets.results);
+    //       this.planetsStored = planets.results;
+    //       this.planetService.planetsPagesAll = this.planetsStored;
+    //       this.planetService.isLoaded = true;
+    //       this.isLoaded = this.planetService.isLoaded;
+    //     });
+    //   } else {
+    //     this.isSearched = false;
+    //     this.isLoaded = this.planetService.isLoaded;
+    //     return this.planetsStored = this.planetService.planetsPagesAll;
+    //   }
+    // }
       // cobining all observables under one variable
       // this.combined = concat(page1Request, page2Request, page3Request, page4Request, page5Request, page6Request, page7Request);
   //     this.combined = concat(page1Request, page2Request);
@@ -92,7 +188,7 @@ export class PlanetsComponent implements OnInit {
   //       console.log(this.planetsStored);
   //
   //       // saving the planets object in the PlanetService
-  //       this.planetService.planetsAll = this.planetsArray;
+  //       this.planetService.planetsPagesAll = this.planetsArray;
   //       // information that planets has been loaded and the loader can be hidden
   //       this.planetService.isLoaded = true;
   //       // passing the information about being loaded to the PlanetService
@@ -102,32 +198,13 @@ export class PlanetsComponent implements OnInit {
   //   } else {
   //     this.isSearched = false;
   //     this.isLoaded = this.planetService.isLoaded;
-  //     return this.planetsStored = this.planetService.planetsAll;
+  //     return this.planetsStored = this.planetService.planetsPagesAll;
   //   }
   // }
 
 
 
-  ngOnInit() {
 
-    this.consequtiveRequests();
-
-    this.planetService.filteredResults.subscribe(
-      data => {
-        console.log(data);
-        this.planetsStored = data; }
-    );
-
-    this.planetService.isSearchedState.subscribe(
-      data => {
-        this.isSearched = data;
-        this.planetService.isLoaded = false;
-      }
-    );
-
-
-
-  }
 
 }
 
@@ -183,7 +260,7 @@ export class PlanetsComponent implements OnInit {
 //       console.log(this.planetsStored);
 //
 //       // saving the planets object in the PlanetService
-//       this.planetService.planetsAll = this.planetsArray;
+//       this.planetService.planetsPagesAll = this.planetsArray;
 //       // information that planets has been loaded and the loader can be hidden
 //       this.planetService.isLoaded = true;
 //       // passing the information about being loaded to the PlanetService
@@ -193,6 +270,65 @@ export class PlanetsComponent implements OnInit {
 //   } else {
 //     this.isSearched = false;
 //     this.isLoaded = this.planetService.isLoaded;
-//     return this.planetsStored = this.planetService.planetsAll;
+//     return this.planetsStored = this.planetService.planetsPagesAll;
 //   }
+// }
+
+// zapytanie
+//     planetsRequest.subscribe(res => {
+//       // pytamy o ilość wszystkich planet
+//       this.total = res.count;
+//       // potwierdzamy, że dostaliśmy odpowiedź
+//       this.isLoaded = true;
+//       // dodajemy odpowiedź do listy planet
+//       if (this.planetsStored === undefined) {
+//         console.log('tablica była pusta', this.planetsStored);
+//         this.planetsStored = res.results;
+//       } else {
+//         console.log('tablica już miała dane', this.planetsStored);
+//         this.planetsStored = [...this.planetsStored, ...res.results];
+//       }
+//       console.log('dane po operacji na planetStored', this.planetsStored);
+//
+//       if (this.planetService.planetsPagesAll === undefined) {
+//         console.log('tablica była pusta', this.planetService.planetsPagesAll);
+//         this.planetService.planetsPagesAll[page] = res.results;
+//         //
+//         // } else {
+//         //   console.log('tablica już miała dane', this.planetService.planetsPagesAll);
+//         //   this.planetService.planetsPagesAll = [...this.planetService.planetsPagesAll, res.results];
+//         // }
+//         console.log('dane po operacji na planetService.planetsPagesAll', this.planetService.planetsPagesAll);
+//
+//         this.planetService.isLoaded = this.isLoaded;
+//       }});
+//   }
+// }
+// można dodać this.isLoaded na false
+// console.log(this.planetService.planetsPagesAll);
+//
+// if (this.planetService.planetsPagesAll[page - 1] === undefined) {
+//   let urlPlanets = `https://swapi.co/api/planets/?page=${page}`;
+//   const planetsRequest = this.planetService.getPlanets(urlPlanets);
+//   planetsRequest.subscribe(res => {
+//     this.planetService.planetsPagesAll[page - 1] = res.results;
+//     console.log(this.planetService.planetsPagesAll);
+//     console.log(res);
+//     for (let i = 1; i <= page; i++) {
+//       if (this.planetService.planetsPagesAll[i - 1] === undefined) {
+//         console.log(this.planetService.planetsPagesAll);
+//         console.log('pozycja pusta', i - 1);
+//         urlPlanets = `https://swapi.co/api/planets/?page=${i}`;
+//         const planetsRequestRest = this.planetService.getPlanets(urlPlanets);
+//         planetsRequestRest.subscribe(
+//           (rest) => {
+//             console.log(rest);
+//           }
+//         );
+//       }
+//     }
+//     this.planetsStored = res.results;
+//     this.isLoaded = true;
+//     this.total = res.count;
+//   });
 // }

@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { NgxPaginationModule } from 'ngx-pagination';
 
 import { AppComponent } from './app.component';
 import { PlanetComponent } from './components/planet/planet.component';
@@ -30,8 +29,7 @@ import { FilmsAndResidentsComponent } from './components/films-and-residents/fil
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    NgxPaginationModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [PlanetService],
   bootstrap: [AppComponent]

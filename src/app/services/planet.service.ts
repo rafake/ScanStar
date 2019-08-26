@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class PlanetService {
-  planetsAll: any;
+  planetsPagesAll: any = [];
   isLoaded: boolean = false;
   count: number;
   public filteredResults = new Subject<any>();

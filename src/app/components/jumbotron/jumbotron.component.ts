@@ -26,7 +26,7 @@ export class JumbotronComponent implements OnInit {
     searchRequest.subscribe(planets => {
       const planetsArrayFromServer = planets.results;
       // passing a planets array from server to service
-      this.planetService.planetsAll = planetsArrayFromServer;
+      this.planetService.planetsPagesAll = planetsArrayFromServer;
       // variable created for purposes of search bar requests
       this.changedPlanets = planetsArrayFromServer;
       // variable confirming that planets were loaded to the main view
