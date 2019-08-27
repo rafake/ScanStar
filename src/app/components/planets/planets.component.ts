@@ -24,8 +24,8 @@ export class PlanetsComponent implements OnInit {
   isLoaded: boolean = false;
   isSearched: boolean = false;
   imagesForPlanets: object = this.planetsDataImagesService.planetsImages;
-  checkIfThePlanetsAllArrayIsFilled: boolean = false;
-  checkIfDownloadedArray: boolean[] = [];
+  // checkIfThePlanetsAllArrayIsFilled: boolean = false;
+  // checkIfDownloadedArray: boolean[] = [];
 
   constructor(private planetService: PlanetService, private planetsDataImagesService: PlanetsDataImagesService) {
   }
@@ -50,7 +50,6 @@ export class PlanetsComponent implements OnInit {
     return temporaryArray;
   }
 
-
   getPage = (page: number, start: number, end: number) => {
     const urlPlanets = `https://swapi.co/api/planets/?page=${page + 1}`;
     const planetsRequest = this.planetService.getPlanets(urlPlanets);
@@ -59,8 +58,8 @@ export class PlanetsComponent implements OnInit {
     let howManyHttpPages: number;
 
     // już sa uzupełnione wyniki (ta strona została pobrana)
-    console.log(this.checkIfDownloadedArray[indexInPlanetAllCountedFromZero]);
-    if (this.checkIfDownloadedArray[indexInPlanetAllCountedFromZero] && this.checkIfThePlanetsAllArrayIsFilled) {
+    console.log(this.planetService.checkIfDownloadedArray[indexInPlanetAllCountedFromZero]);
+    if (this.planetService.checkIfDownloadedArray[indexInPlanetAllCountedFromZero] && this.planetService.checkIfThePlanetsAllArrayIsFilled) {
       this.planetsStored = this.getPlanetStored(this.planetService.planetsPagesAll);
       console.log(this.planetsStored);
       this.isLoaded = true;
@@ -69,25 +68,28 @@ export class PlanetsComponent implements OnInit {
       planetsRequest.subscribe(
         (data) => {
           this.total = data.count;
+          this.planetService.total = this.total;
           console.log(indexInPlanetAllCountedFromZero);
           this.planetService.planetsPagesAll[indexInPlanetAllCountedFromZero] = data.results;
 
 
           // zapełniamy całą tablicę ze stronami pustymi stronami tam gdzie nie została pobrana, aby ustalić indeksy
-          if (!this.checkIfThePlanetsAllArrayIsFilled) {
+          if (!this.planetService.checkIfThePlanetsAllArrayIsFilled) {
+            this.planetService.mainPageLoaded = true;
             howManyHttpPages = Math.ceil(this.total / data.results.length);
             console.log(howManyHttpPages);
             for (let i = 1; i < howManyHttpPages; i++) {
               this.planetService.planetsPagesAll[i] = emptyArray;
-              this.checkIfDownloadedArray[i] = false;
+              this.planetService.checkIfDownloadedArray[i] = false;
             }
-            this.checkIfThePlanetsAllArrayIsFilled = true;
+            this.planetService.checkIfThePlanetsAllArrayIsFilled = true;
           }
 
-          this.checkIfDownloadedArray[indexInPlanetAllCountedFromZero] = true;
+          this.planetService.checkIfDownloadedArray[indexInPlanetAllCountedFromZero] = true;
 
           console.log(this.planetService.planetsPagesAll);
           this.planetsStored = this.getPlanetStored(this.planetService.planetsPagesAll);
+          this.planetService.planetAll = this.planetsStored;
           console.log(this.planetsStored);
           this.isLoaded = true;
         });
@@ -97,8 +99,13 @@ export class PlanetsComponent implements OnInit {
   ngOnInit() {
 
     // zapytanie o pierwszą listę planet
-    this.getPage(0, 0, 9);
-
+    if (!this.planetService.mainPageLoaded) {
+      this.getPage(0, 0, 9);
+    } else {
+      this.isLoaded = true;
+      this.planetsStored = this.planetService.planetAll;
+      this.total = this.planetService.total;
+    }
 
     this.planetService.filteredResults.subscribe(
       data => {
@@ -112,12 +119,7 @@ export class PlanetsComponent implements OnInit {
         this.planetService.isLoaded = false;
       }
     );
-
-
-
   }
-
-
 
   linkProvider(array, attr, value) {
     let rightIndex: number;

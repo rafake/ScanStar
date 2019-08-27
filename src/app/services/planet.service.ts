@@ -8,8 +8,13 @@ import { Subject } from 'rxjs';
 })
 export class PlanetService {
   planetsPagesAll: any = [];
+  planetAll: any[] = [];
+  mainPageLoaded: boolean = false;
   isLoaded: boolean = false;
   count: number;
+  total: number;
+  checkIfThePlanetsAllArrayIsFilled: boolean = false;
+  checkIfDownloadedArray: boolean[] = [];
   public filteredResults = new Subject<any>();
   public isSearchedState = new Subject<any>();
   public residentsResults = new Subject<any>();
