@@ -1,13 +1,17 @@
 <section class="jumbotron jumbotron-fluid text-center jumbotron--bg">
+  <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+    <source src="./assets/video/AnimationStars.mp4" type="video/mp4">
+  </video>
   <div class="container">
+
 <!--    heading-->
-    <h1 class="jumbotron-heading text-white jumbotron-heading--size">Search galaxies</h1>
-    <p class="lead text-light">and find distant Star Wars planets with StarScan!</p>
+    <h1 class="jumbotron-heading text-white jumbotron-heading--size mb-1">STAR WARS</h1>
+    <p class="lead text-light">planet browser</p>
 <!--    end of heading-->
 
 <!--    searchbar-->
     <form (submit)="onSubmit($event)" class="input-group mb-3">
-      <input #searchInput name="searchInput" [(ngModel)]="searchPhrase" type="text" class="form-control" placeholder="Enter a search phrase (e.g. a planet name)." aria-label="searchBar">
+      <input #searchInput name="searchInput" [(ngModel)]="searchPhrase" type="text" class="form-control" placeholder="Enter the planet name" aria-label="searchBar">
       <div class="input-group-append">
 
 <!--        button sending a request to server-->

@@ -1,7 +1,8 @@
 import {Component, getPlatform, OnInit} from '@angular/core';
 import { PlanetService } from '../../services/planet.service';
+import { SlicePipe } from '@angular/common';
 import { Planet } from '../../models/Planet';
-import {concat, observable, Subject} from 'rxjs';
+import { concat, observable, Subject} from 'rxjs';
 import { PlanetsDataImagesService } from '../../services/planets-data-images.service';
 
 @Component({
@@ -32,13 +33,14 @@ export class PlanetsComponent implements OnInit {
   }
 
   getArrayFromNumber(length) {
-    return new Array(Math.ceil(length / this.perPage));
+    return new Array(Math.ceil(length / Number(this.perPage)));
   }
 
-  updateIndex = (pageIndex, itemsPerPage) => {
-    this.startIndex = pageIndex * itemsPerPage;
-    this.endIndex = this.startIndex + itemsPerPage;
-    this.getPage(pageIndex, this.startIndex, this.endIndex);
+  updateIndex = (pageIndex: number, itemsPerPage: number) => {
+    this.startIndex = pageIndex * Number(itemsPerPage);
+    this.endIndex = this.startIndex + Number(itemsPerPage);
+    console.log(this.endIndex, typeof this.endIndex);
+    this.getPage(pageIndex, this.startIndex, this.endIndex, Number(itemsPerPage));
   }
 
   getPlanetStored(arr) {
@@ -50,10 +52,14 @@ export class PlanetsComponent implements OnInit {
     }
     return temporaryArray;
   }
-
-  getPage = (page: number, start: number, end: number) => {
+// 7 strona
+  getPage = (page: number, start: number, end: number, perPageNo: number) => {
+    // link do 8 strony
+    const NumberOfResultsGotFromServer = 10;
+    page = Math.ceil((page * perPageNo) / NumberOfResultsGotFromServer);
     const urlPlanets = `https://swapi.co/api/planets/?page=${page + 1}`;
     const planetsRequest = this.planetService.getPlanets(urlPlanets);
+
     let indexInPlanetAllCountedFromZero = page;
     const emptyArray = [{name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}, {name: 'no data'}];
     let howManyHttpPages: number;
@@ -103,7 +109,7 @@ export class PlanetsComponent implements OnInit {
 
     // zapytanie o pierwszą listę planet
     if (!this.planetService.mainPageLoaded) {
-      this.getPage(0, 0, 9);
+      this.getPage(0, 0, 9, this.perPage);
     } else {
       this.isLoaded = true;
       this.planetsStored = this.planetService.planetAll;

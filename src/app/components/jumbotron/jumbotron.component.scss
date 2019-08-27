@@ -4,11 +4,39 @@
   //  //background-position: 10% -95%;
   //  //background-size: cover;
   background-color: #000;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
 }
 
 .jumbotron-heading--size {
   font-weight: bolder;
+  font-family: StarJedi, Arial, sans-serif;
   font-size: 90px;
   color: #FFE919;
 }
 
+video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: 0;
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+@font-face {
+  font-family: 'StarJedi';
+  src: url('./../../../assets/fonts/Starjedi.ttf')  format('truetype');
+}
