@@ -19,7 +19,7 @@
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <div *ngIf="filmsToShow.length == 0 && filmsLoaded">The planet has not been involved in any of the Star Wars episodes.</div>
+        <div *ngIf="noFilms && filmsLoaded">The planet has not been involved in any of the Star Wars episodes.</div>
       </div>
     </div>
   </div>
@@ -42,7 +42,7 @@
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <div *ngIf="residentsToShow.length == 0 && residentsLoaded">No significant character role has been a resident on this planet.</div>
+        <div *ngIf="noResidents && residentsLoaded">No significant character role has been a resident on this planet.</div>
       </div>
     </div>
   </div>

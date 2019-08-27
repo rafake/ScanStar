@@ -11,14 +11,20 @@ export class PlanetService {
   planetAll: any[] = [];
   mainPageLoaded: boolean = false;
   isLoaded: boolean = false;
+  searchView: boolean = false;
   count: number;
   total: number;
   checkIfThePlanetsAllArrayIsFilled: boolean = false;
   checkIfDownloadedArray: boolean[] = [];
+  planetsResidentsDownloaded: Array<[string]> = [];
+  planetIdFromSearchEventually: number;
+  planetsFilmsDownloaded: any[] = [];
   public filteredResults = new Subject<any>();
   public isSearchedState = new Subject<any>();
   public residentsResults = new Subject<any>();
   public filmsResults = new Subject<any>();
+  public planetId = new Subject<any>();
+  public planetIdFromSearchSubject = new Subject<any>();
 
   constructor(private http: HttpClient) {
   }
@@ -39,13 +45,18 @@ export class PlanetService {
 
   // function passing the results of search to planets component (main view were the planets are displayed)
   passFilteredResults(passedData) {
-    console.log(this.filteredResults);
     this.filteredResults.next(passedData);
   }
 
   // function passing a variable confirming that a search request has been sent
   passIsSearched(passedData) {
+    this.searchView = true;
     this.isSearchedState.next(passedData);
+  }
+
+  // function passing a variable confirming that a search request has been sent
+  passIdFromSearch(passedData) {
+    this.planetIdFromSearchSubject.next(passedData);
   }
 
   getResidentsData(urlResident): Observable<any> {
@@ -59,13 +70,22 @@ export class PlanetService {
 
   // function passing the resident url from planet component to films and residents component
   passResidentUrl(passedData) {
-    console.log(this.residentsResults);
+    if (passedData === 'no residents') {
+      return this.residentsResults.complete();
+    }
     this.residentsResults.next(passedData);
   }
 
   // function passing the film url from planet component to films and residents component
   passFilmUrl(passedData) {
+    if (passedData === 'no films') {
+      return this.filmsResults.complete();
+    }
     this.filmsResults.next(passedData);
+  }
+
+  passId(passedData) {
+    this.planetId.next(passedData);
   }
 
 }
