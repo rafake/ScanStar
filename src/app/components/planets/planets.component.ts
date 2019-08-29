@@ -23,7 +23,7 @@ export class PlanetsComponent implements OnInit {
   planetsRequestsUrls: string[] = [];
   numberOfResultsGotFromServer: number = 10;
 
-  constructor(private planetService: PlanetService, private planetsDataImagesService: PlanetsDataImagesService) {
+  constructor(public planetService: PlanetService, private planetsDataImagesService: PlanetsDataImagesService) {
   }
 
   getArrayFromNumber(length) {
@@ -183,6 +183,10 @@ export class PlanetsComponent implements OnInit {
       }
 
     }
+  }
+
+  searchViewFalse = () => {
+    this.planetService.searchView = false;
   }
 
   linkProvider(array, attr, value) {

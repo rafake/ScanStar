@@ -15,7 +15,11 @@ export class PlanetComponent implements OnInit {
   planetIdfromSearchLocal: number;
   planetIsLoaded: boolean = false;
 
-  constructor(private route: ActivatedRoute, private planetService: PlanetService, private location: Location) {  }
+  constructor(private route: ActivatedRoute, public planetService: PlanetService, private location: Location) {  }
+
+  searchViewFalse = () => {
+    this.planetService.searchView = false;
+  }
 
   ngOnInit() {
 
