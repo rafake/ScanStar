@@ -87,6 +87,7 @@ export class PlanetsComponent implements OnInit {
 
     console.log('pages: ', pages);
     for (let i = 0; i < pages.length; i++) {
+      console.log(this.planetService.checkIfDownloadedArray);
       console.log(this.planetService.checkIfDownloadedArray[pages[i]]);
       if (this.planetService.mainPageLoaded && ((pages[i] + 1) > (Math.ceil(this.planetService.total / this.numberOfResultsGotFromServer)))) {
         break;
@@ -184,9 +185,27 @@ export class PlanetsComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  linkProvider(array, attr, value) {
+    let rightIndex: number;
+    // if (!this.planetService.searchView) {
+      for (let i = 0; i < array.length; i += 1) {
+        if (array[i][attr] === value) {
+          rightIndex = i;
+          return rightIndex;
+        }
+      }
+    // }
+    // else {
+    //   rightIndex = this.planetService.planetIdFromSearchEventually;
+    //   // this.planetService.searchView = false;
+    // }
 
-    this.planetService.searchView = false;
+    return rightIndex;
+  }
+
+  ngOnInit() {
+    //
+    // this.planetService.searchView = false;
 
     if (!this.planetService.mainPageLoaded) {
       console.log('first paged did not load yet - sending a request');
@@ -202,8 +221,11 @@ export class PlanetsComponent implements OnInit {
       data => {
         this.mainSearchView = true;
         this.isLoaded = false;
+        console.log('data from jumbotron received', data)
         this.planetsStored = data;
         this.isLoaded = true;
+        this.startIndex = 0;
+        this.endIndex = 10;
       }
     );
 
@@ -215,20 +237,12 @@ export class PlanetsComponent implements OnInit {
     );
   }
 
-  linkProvider(array, attr, value) {
-    let rightIndex: number;
-    if (!this.planetService.searchView) {
-      for (let i = 0; i < array.length; i += 1) {
-        if (array[i][attr] === value) {
-          rightIndex = i;
-          return rightIndex;
-        }
-      }
-    } else {
-      rightIndex = this.planetService.planetIdFromSearchEventually;
-      this.planetService.searchView = false;
-    }
 
-    return rightIndex;
-  }
+  getFirstPageArray() {
+    this.mainSearchView = false;
+    this.planetService.searchView = false;
+    this.planetsStored = this.planetService.planetAll;
+}
+
+
 }

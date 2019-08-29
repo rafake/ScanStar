@@ -15,6 +15,7 @@ export class PlanetService {
   searchView: boolean = false;
   count: number;
   total: number;
+  planetIdService: number;
   checkIfThePlanetsAllArrayIsFilled: boolean = false;
   checkIfDownloadedArray: boolean[] = [];
   planetsResidentsDownloaded: Array<[string]> = [];
@@ -39,19 +40,6 @@ export class PlanetService {
     return this.http.get<any>(urlOfPost);
   }
 
-  checkIfDownloadedArrayFunction = (array) => {
-    console.log('pages pobrane przez Serwis: ', this.pages)
-    const newArray = array.map((el, i) => {
-      console.log(this.checkIfDownloadedArray[el[i]]);
-      if (this.checkIfDownloadedArray[el[i]] === false || this.checkIfDownloadedArray[el[i]] === undefined) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-    return newArray;
-  };
-
   // sending a search request to server (url added in jumbotron component)
   getPlanetsWithSearch(url): Observable<any> {
     return this.http.get<any>(url);
@@ -74,13 +62,12 @@ export class PlanetService {
   }
 
   getResidentsData(urlResident): Observable<any> {
-      return this.http.get<any>(urlResident);
+    return this.http.get<any>(urlResident);
   }
 
   getFilmsData(urlFilm): Observable<any> {
     return this.http.get<any>(urlFilm);
   }
-
 
   // function passing the resident url from planet component to films and residents component
   passResidentUrl(passedData) {

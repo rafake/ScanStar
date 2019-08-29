@@ -8,9 +8,10 @@ import { PlanetService } from '../../services/planet.service';
 })
 export class JumbotronComponent implements OnInit {
   searchPhrase: any = '';
-  // variable created for purposes of search bar requests
   changedPlanets: any = '';
   isSearched: boolean = false;
+  alreadyInMemory: boolean = false;
+  index: number;
 
   constructor(private planetService: PlanetService) {}
 
@@ -19,38 +20,64 @@ export class JumbotronComponent implements OnInit {
   }
 
   sendSearchRequest(inputValue) {
-    // https://swapi.co/api/planets/38/"
-    const urlSearch = `https://swapi.co/api/planets/?search=${inputValue}`;
-    // sending a search request to server
-    const searchRequest = this.planetService.getPlanetsWithSearch(urlSearch);
-    // subscription to observable
-    searchRequest.subscribe(planets => {
-      const planetsUrl = planets.results[0].url;
-      console.log(planetsUrl);
-      let reg = new RegExp('([\\d]+)');
-      let idRegex = planetsUrl.match(reg)[0];
-      idRegex = parseInt(idRegex);
+    for (let i = 0; i < this.planetService.planetAll.length; i++) {
+      if (this.planetService.planetAll[i].name == inputValue) {
+        this.alreadyInMemory = true;
+        this.index = i;
+      }
+    }
+
+    if (this.alreadyInMemory) {
+      console.log('getting data from memory', this.planetService.planetAll[this.index]);
       this.planetService.searchView = true;
-      console.log(this.planetService.searchView)
-      console.log(idRegex);
-      this.planetService.planetIdFromSearchEventually = idRegex - 2;
-      // const planetsArrayFromServer = planets.results;
-      // passing a planets array from server to service
-      // this.planetService.plane = planetsArrayFromServer;
-      // variable created for purposes of search bar requests
-      this.changedPlanets = planets.results;
-      // variable confirming that planets were loaded to the main view
-      this.planetService.isLoaded = true;
-      // variable confirming that planets were loaded after a search request
-      this.isSearched = true;
-      // call of the function passing the results of search to planets component (main view were the planets are displayed)
-      this.planetService.passFilteredResults(this.changedPlanets);
+
+      let url = this.planetService.planetAll[this.index].url;
+      console.log(url);
+      let reg1 = new RegExp('(\\d+)(?!.*\\d)');
+      let idRegex1 = url.match(reg1)[0];
+      let tempIdRegex1 = Number(idRegex1);
+      console.log(tempIdRegex1);
+
+      this.planetService.planetIdService = tempIdRegex1 - 1;
+
+      this.planetService.passFilteredResults([this.planetService.planetAll[this.index]]);
       // call of the function passing a variable confirming that a search request has been sent
       this.planetService.passIsSearched(this.isSearched);
 
-      this.planetService.passIdFromSearch(idRegex);
-    });
+      this.planetService.passIdFromSearch(tempIdRegex1);
+      this.alreadyInMemory = false;
+    } else {
+      const urlSearch = `https://swapi.co/api/planets/?search=${inputValue}`;
+      // sending a search request to server
+      const searchRequest = this.planetService.getPlanetsWithSearch(urlSearch);
+      // subscription to observable
+      searchRequest.subscribe(planets => {
+        const planetsUrl = planets.results[0].url;
+        console.log(planetsUrl);
+        let reg = new RegExp('(\\d+)(?!.*\\d)');
+        let idRegex = planetsUrl.match(reg)[0];
+        let tempIdRegex = Number(idRegex);
+        this.planetService.searchView = true;
+        console.log(this.planetService.searchView);
+        console.log(tempIdRegex);
+        this.changedPlanets = planets.results;
+        console.log(planets.results)
+        // variable confirming that planets were loaded to the main view
+        this.planetService.isLoaded = true;
+        // variable confirming that planets were loaded after a search request
+        this.isSearched = true;
+        // call of the function passing the results of search to planets component (main view were the planets are displayed)
+        this.planetService.passFilteredResults(this.changedPlanets);
+        // call of the function passing a variable confirming that a search request has been sent
+        this.planetService.passIsSearched(this.isSearched);
+        this.planetService.planetIdService = tempIdRegex - 1;
+
+        this.planetService.passIdFromSearch(tempIdRegex);
+      });
+    }
+
   }
+
   onSubmit(e) {
     e.preventDefault();
 

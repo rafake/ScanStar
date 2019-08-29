@@ -49,15 +49,13 @@ export class PlanetComponent implements OnInit {
     this.planetId = +this.route.snapshot.paramMap.get('id');
     console.log(this.planetId);
 
-    console.log('stan szukania', this.planetService.searchView);
+    // this.planetService.planetIdFromSearchSubject.subscribe(idFromUrl => {
+    //   console.log(Number(idFromUrl));
+    //   this.planetService.planetIdFromSearchEventually = Number(idFromUrl);
+    // });
 
-    this.planetService.planetIdFromSearchSubject.subscribe(idFromUrl => {
-      console.log(Number(idFromUrl));
-      this.planetService.planetIdFromSearchEventually = Number(idFromUrl);
-    });
-
-    console.log(this.planetId);
-    // const id = this.planetId;
+    // console.log(this.planetId);
+    // // const id = this.planetId;
 
     if (this.planetService.mainPageLoaded && !(this.planetService.planetAll[this.planetId - 1].name === 'no data')) {
       this.planetIsLoaded = true;
