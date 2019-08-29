@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 export class PlanetService {
   planetsPagesAll: any = [];
   planetAll: any[] = [];
+  pages: number[];
   mainPageLoaded: boolean = false;
   isLoaded: boolean = false;
   searchView: boolean = false;
@@ -37,6 +38,19 @@ export class PlanetService {
     const urlOfPost = `https://swapi.co/api/planets/${id}/`;
     return this.http.get<any>(urlOfPost);
   }
+
+  checkIfDownloadedArrayFunction = (array) => {
+    console.log('pages pobrane przez Serwis: ', this.pages)
+    const newArray = array.map((el, i) => {
+      console.log(this.checkIfDownloadedArray[el[i]]);
+      if (this.checkIfDownloadedArray[el[i]] === false || this.checkIfDownloadedArray[el[i]] === undefined) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    return newArray;
+  };
 
   // sending a search request to server (url added in jumbotron component)
   getPlanetsWithSearch(url): Observable<any> {
