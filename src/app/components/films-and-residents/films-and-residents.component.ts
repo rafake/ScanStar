@@ -39,14 +39,10 @@ export class FilmsAndResidentsComponent implements OnInit, OnChanges {
         this.planetService.getResidentsData(this.residents[i]).subscribe(resident => {
             this.residentsToShow.push(resident);
             console.log(resident.name);
-            // let a = resident.name;
-            // a.toString();
-            // this.planetService.planetsResidentsDownloaded[this.id] = [''];
-            // this.planetService.planetsResidentsDownloaded[this.id].push('je');
+          this.residentsLoaded = true;
           });
       }
       console.log(this.planetService.planetsResidentsDownloaded[this.id]);
-      this.residentsLoaded = true;
       },
       (data) => console.log(data),
       () => {
@@ -66,9 +62,10 @@ export class FilmsAndResidentsComponent implements OnInit, OnChanges {
           this.planetService.getFilmsData(this.films[i]).subscribe( film => {
             this.filmsToShow.push(film);
             console.log(film.name);
+            this.filmsLoaded = true;
           });
         }
-        this.filmsLoaded = true;
+
       },
       (data) => console.log(data),
       () => {
